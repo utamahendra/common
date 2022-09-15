@@ -4,7 +4,6 @@ import com.example.core.BuildConfig
 import com.example.core.Timeout
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,7 +23,6 @@ val coreNetworkModule = module {
     }
 
     single {
-        val dispatcher = Dispatcher()
         OkHttpClient.Builder()
             .addInterceptor(get<Interceptor>(named("logging")))
             .readTimeout(Timeout.GENERAL_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -33,9 +31,9 @@ val coreNetworkModule = module {
     }
 }
 
-inline fun <reified T> provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): T {
+inline fun <reified T> provideRetrofit(okHttpClient: OkHttpClient, gson: Gson, baseUrl: String): T {
     val retrofit = Retrofit.Builder()
-        .baseUrl("https://min-api.cryptocompare.com/")
+        .baseUrl(baseUrl)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
